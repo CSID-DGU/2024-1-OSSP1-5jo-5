@@ -1,12 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import axios from 'axios';
-import Cookies from 'js-cookie';
 import SearchBar from "../../component/common/SearchBar";
 import * as S from './postAPIStyle';
+import { UserContext } from '../../component/user/UserContext';
 
 const PostAPI = () => {
   const categories = ["AI", "IT", "SNS", "건강", "게임", "과학", "교육", "교통", "금융", "날씨", "뉴스 & 미디어", "부동산", "비디오 & 이미지", "쇼핑", "스포츠", "식음료", "에너지", "여행", "예술 & 엔터테인먼트", "기타"];
-  const userId = Cookies.get('user_id');
+  const { user } = useContext(UserContext); // Use useContext to access user
+  const userId = user?.user_id;
 
   const [apiDetails, setApiDetails] = useState({
     name: '',
@@ -159,10 +160,9 @@ const PostAPI = () => {
   
     setIsSubmitting(true);
   
-    // API 등록 로직
     try {
       const requestBody = {
-        user_id: Cookies.get('user_id'),
+        user_id: userId,
         name: apiDetails.name,
         description: apiDetails.description,
         category: apiDetails.category,
@@ -190,7 +190,7 @@ const PostAPI = () => {
         ]
       };
   
-      console.log("Request Body: ", requestBody); // 요청 본문을 콘솔에 출력하여 확인
+      console.log("Request Body: ", requestBody);
   
       const response = await axios.post('http://localhost:8080/api/data', requestBody, {
         headers: {
@@ -220,7 +220,7 @@ const PostAPI = () => {
       console.error('API 등록 오류:', error);
       alert('API 등록 중 오류가 발생했습니다.');
     } finally {
-      setIsSubmitting(false); // Enable the button after the request is done
+      setIsSubmitting(false);
     }
   };
     

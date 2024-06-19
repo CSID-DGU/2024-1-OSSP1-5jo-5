@@ -1,18 +1,19 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import Cookies from 'js-cookie';
 import SearchBar from "../../component/common/SearchBar";
 import * as S from './boardStyle';
 import axios from 'axios';
+import { UserContext } from '../../component/user/UserContext';
 
 const Board = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { user } = useContext(UserContext); // Use useContext to access user
   const [activeTab, setActiveTab] = useState('freeBoard');
   const [currentPage, setCurrentPage] = useState(1);
   const [posts, setPosts] = useState([]);
   const [totalPages, setTotalPages] = useState(1);
-  const userId = Cookies.get('user_id');
+  const userId = user?.user_id; // Get userId from context
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
