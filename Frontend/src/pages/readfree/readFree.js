@@ -1,13 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie';
 import SearchBar from "../../component/common/SearchBar";
 import * as S from './readFreeStyle';
 import axios from 'axios';
+import { UserContext } from '../../component/user/UserContext';
 
 const ReadFree = () => {
   const { postId } = useParams();
   const navigate = useNavigate();
+  const { user } = useContext(UserContext); // Use useContext to access user
   const [post, setPost] = useState(null);
   const [comments, setComments] = useState([]);
   const [showCommentBox, setShowCommentBox] = useState(false);
@@ -15,7 +17,7 @@ const ReadFree = () => {
   const [editingCommentId, setEditingCommentId] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const commentsPerPage = 5;
-  const userId = Cookies.get('user_id');
+  const userId = user?.user_id; // Get userId from context
   const Admin_account = Cookies.get('Admin_account');
 
   useEffect(() => {

@@ -1,13 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie';
 import SearchBar from "../../component/common/SearchBar";
 import * as S from './readQnAStyle';
 import axios from 'axios';
+import { UserContext } from '../../component/user/UserContext';
 
 const ReadQnA = () => {
   const { postId } = useParams();
   const navigate = useNavigate();
+  const { user } = useContext(UserContext); // Use useContext to access user
   const [post, setPost] = useState(null);
   const [answers, setAnswers] = useState([]);
   const [showAnswerBox, setShowAnswerBox] = useState(false);
@@ -15,7 +17,7 @@ const ReadQnA = () => {
   const [editingAnswerId, setEditingAnswerId] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const answersPerPage = 5;
-  const userId = Cookies.get('user_id');
+  const userId = user?.user_id; // Get userId from context
   const Admin_account = Cookies.get('Admin_account');
 
   useEffect(() => {
@@ -217,7 +219,7 @@ const ReadQnA = () => {
             <S.PostContentBox>
               <p>{post.content}</p>
             </S.PostContentBox>
-            {(userId === post.user_id || Admin_account === 1) && (
+            {(userId === post.user_id || Admin_account === '1') && (
               <S.PostActions>
                 <button onClick={handleEditPost}>수정</button>
                 <button onClick={handleDeletePost}>삭제</button>
@@ -260,13 +262,13 @@ const ReadQnA = () => {
                     ) : (
                       <>
                         <p>{validatedAnswer.content}</p>
-                        {!validatedAnswer.isAccepted && (userId === validatedAnswer.user_id || Admin_account === 1) && (
+                        {!validatedAnswer.isAccepted && (userId === validatedAnswer.user_id || Admin_account === '1') && (
                           <S.AnswerActions>
                             <button onClick={() => handleAnswerEdit(validatedAnswer.id, validatedAnswer.content)}>수정</button>
                             <button onClick={() => handleAnswerDelete(validatedAnswer.id)}>삭제</button>
                           </S.AnswerActions>
                         )}
-                        {(userId === post.user_id || Admin_account === 1) && !validatedAnswer.isAccepted && (
+                        {(userId === post.user_id || Admin_account === '1') && !validatedAnswer.isAccepted && (
                           <S.AnswerActions>
                             <button
                               onClick={() => handleAcceptAnswer(validatedAnswer.id)}
@@ -283,8 +285,8 @@ const ReadQnA = () => {
               })}
               <S.Pagination>
                 {Array.from({ length: totalAnswerPages }, (_, i) => (
-                  <S.PaginationButton 
-                    key={i + 1} 
+                  <S.PaginationButton
+                    key={i + 1}
                     active={currentPage === i + 1}
                     onClick={() => setCurrentPage(i + 1)}
                   >

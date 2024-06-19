@@ -1,30 +1,28 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import Cookies from 'js-cookie';
 import SearchBar from "../../component/common/SearchBar";
 import * as S from './writeStyle';
 import axios from 'axios';
+import { UserContext } from '../../component/user/UserContext';
 
 const WriteBoard = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { user } = useContext(UserContext);
   const [isEditMode, setIsEditMode] = useState(false);
   const [postId, setPostId] = useState(null);
   const [boardType, setBoardType] = useState('free');
   const [title, setTitle] = useState('');
   const [apiName, setApiName] = useState('');
   const [content, setContent] = useState('');
-  const [userId, setUserId] = useState('');
+  const userId = user?.user_id;
 
   useEffect(() => {
-    const userId = Cookies.get('user_id');
-    if (userId) {
-      setUserId(userId);
-    } else {
+    if (!userId) {
       alert('로그인이 필요합니다.');
       navigate('/login');
     }
-  }, [navigate]);
+  }, [userId, navigate]);
 
   useEffect(() => {
     if (location.state) {
